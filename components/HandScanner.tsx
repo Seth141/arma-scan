@@ -695,7 +695,7 @@ const toggleHandGuide = () => {
   return (
     <div className="space-y-2 sm:space-y-4">
       {/* Control buttons - compact on mobile */}
-      <div className="flex justify-center">
+      <div className="-mx-4 sm:mx-0 sm:flex sm:justify-center">
         <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex sm:flex-wrap sm:justify-center">
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -736,7 +736,7 @@ const toggleHandGuide = () => {
     <div className="relative bg-gray-900 rounded-xl overflow-hidden border border-gray-700 -mx-4 sm:mx-0">
       <video
         ref={videoRef}
-        className="w-full min-h-[45vh] sm:min-h-0 sm:h-80 object-cover"
+        className="w-full min-h-[38vh] sm:min-h-0 sm:h-80 object-cover"
         autoPlay
         playsInline
         muted
@@ -828,18 +828,18 @@ const toggleHandGuide = () => {
             <motion.span
               aria-hidden
               initial={{ scaleY: 0, opacity: 0 }}
-              animate={{ scaleY: 1, opacity: [0.5, 0.9, 0.5] }}
+              animate={{ scaleY: 1, opacity: [0.3, 0.6, 0.3] }}
               transition={{ duration: 0.45, ease: 'easeOut', opacity: { duration: 2.4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' } }}
               style={{ transformOrigin: 'top center' }}
-              className="pointer-events-none absolute -inset-[2px] rounded-2xl bg-gradient-to-r from-indigo-400/50 via-blue-400/40 to-cyan-400/50 blur-md"
+              className="pointer-events-none absolute -inset-[2px] rounded-2xl bg-gradient-to-r from-blue-600/40 via-blue-500/30 to-blue-600/40 blur-md"
             />
             <motion.span
               aria-hidden
               initial={{ scaleY: 0, opacity: 0 }}
-              animate={{ scaleY: 1, opacity: [0.25, 0.6, 0.25] }}
+              animate={{ scaleY: 1, opacity: [0.15, 0.4, 0.15] }}
               transition={{ duration: 0.45, ease: 'easeOut', opacity: { duration: 2.8, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' } }}
               style={{ transformOrigin: 'top center' }}
-              className="pointer-events-none absolute -inset-[6px] rounded-3xl bg-gradient-to-r from-indigo-500/30 via-blue-500/25 to-cyan-500/30 blur-xl"
+              className="pointer-events-none absolute -inset-[6px] rounded-3xl bg-gradient-to-r from-blue-700/25 via-blue-600/20 to-blue-700/25 blur-xl"
             />
             <motion.button
             initial={{ scaleY: 0, opacity: 0 }}
@@ -847,8 +847,8 @@ const toggleHandGuide = () => {
               scaleY: 1,
               opacity: 1,
               boxShadow: [
-                '0 10px 20px rgba(99, 102, 241, 0.12)',
-                '0 22px 40px rgba(99, 102, 241, 0.28)'
+                '0 10px 20px rgba(30, 64, 175, 0.2)',
+                '0 22px 40px rgba(30, 64, 175, 0.35)'
               ],
             }}
             transition={{
@@ -861,7 +861,7 @@ const toggleHandGuide = () => {
             style={{ transformOrigin: 'top center' }}
             type="button"
             onClick={previewSTL}
-              className="relative z-10 px-7 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-b from-gray-900/85 via-indigo-950/30 to-black/85 hover:from-gray-900/75 hover:via-indigo-900/40 hover:to-black/75 backdrop-blur-sm border border-gray-700 hover:border-indigo-500/70 ring-1 ring-inset ring-white/5 shadow-xl shadow-black/30 transition-all"
+              className="relative z-10 px-7 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-b from-blue-950 via-blue-900 to-blue-950 hover:from-blue-900 hover:via-blue-800 hover:to-blue-900 border border-blue-800/60 hover:border-blue-600/70 ring-1 ring-inset ring-blue-400/10 shadow-xl shadow-blue-950/50 transition-all"
           >
             Order Your Gloves
             </motion.button>
