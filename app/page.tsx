@@ -75,7 +75,7 @@ export default function Home() {
         )}
       </AnimatePresence>
       
-      <div className={`container mx-auto px-4 ${isScanning ? 'py-2 sm:py-16' : 'py-10 sm:py-16'}`}>
+      <div className={`container mx-auto px-4 ${isScanning ? 'py-2 pb-8 sm:py-16' : 'py-10 sm:py-16'}`}>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

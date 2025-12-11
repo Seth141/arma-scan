@@ -737,11 +737,11 @@ const toggleHandGuide = () => {
       </div>
     </div>
 
-    {/* Camera view - much larger on mobile */}
+    {/* Camera view - sized to fit mobile viewport with button visible */}
     <div className="relative bg-gray-900 rounded-xl overflow-hidden border border-gray-700 -mx-4 sm:mx-0">
       <video
         ref={videoRef}
-        className="w-full min-h-[28vh] sm:min-h-0 sm:h-80 object-cover"
+        className="w-full aspect-[4/3] max-h-[50vh] sm:max-h-80 object-cover"
         autoPlay
         playsInline
         muted
@@ -825,7 +825,7 @@ const toggleHandGuide = () => {
     </div>
 
     {/* Status panel below the video */}
-    <div className={`bg-gradient-to-b from-gray-900/70 to-black/70 backdrop-blur-sm rounded-xl p-4 border border-gray-700 ${showOrderButton ? '-mx-4 sm:mx-0' : ''}`}>
+    <div className={`bg-gradient-to-b from-gray-900/70 to-black/70 backdrop-blur-sm rounded-xl p-4 border border-gray-700 ${showOrderButton ? '-mx-4 sm:mx-0 pb-6 mb-2' : ''}`}>
       {showOrderButton ? (
         <div className="flex items-center justify-center">
           <div className="relative">
