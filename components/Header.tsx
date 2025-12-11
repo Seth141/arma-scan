@@ -12,7 +12,7 @@ export default function Header() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative w-32 h-10 sm:w-40 sm:h-14"
+            className="relative w-44 h-12 sm:w-40 sm:h-14"
           >
             <Image
               src={armalogo}
