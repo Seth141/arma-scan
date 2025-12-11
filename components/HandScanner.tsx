@@ -185,9 +185,9 @@ export default function HandScanner({ onMeasurementsUpdate, isScanning, setIsSca
     ctx.closePath()
   }
 
-  // Target hand size for guide (in pixels at optimal distance)
-  const TARGET_HAND_WIDTH = 300 // pixels
-  const TARGET_HAND_HEIGHT = 400 // pixels
+  // Target hand size as percentage of canvas (works on any screen size)
+  const TARGET_HAND_WIDTH_PERCENT = 0.45 // 45% of canvas width
+  const TARGET_HAND_HEIGHT_PERCENT = 0.55 // 55% of canvas height
 
   // Calculate calibration factor based on detected palm width vs expected glove size
   const calculateGloveSizeCalibration = (detectedPalmWidthPixels: number, expectedPalmWidthCm: number) => {
@@ -207,7 +207,7 @@ export default function HandScanner({ onMeasurementsUpdate, isScanning, setIsSca
     const width = canvas.width
     const height = canvas.height
 
-    // Calculate hand bounds
+    // Calculate hand bounds as percentage of canvas
     let minX = 1, maxX = 0, minY = 1, maxY = 0
     landmarks.forEach((landmark: any) => {
       minX = Math.min(minX, landmark.x)
@@ -216,15 +216,20 @@ export default function HandScanner({ onMeasurementsUpdate, isScanning, setIsSca
       maxY = Math.max(maxY, landmark.y)
     })
 
-    // Convert to pixel coordinates
-    const handWidth = (maxX - minX) * width
-    const handHeight = (maxY - minY) * height
+    // Hand size as percentage of canvas
+    const handWidthPercent = maxX - minX
+    const handHeightPercent = maxY - minY
 
-    // Calculate fit score based on how close the hand size is to target
-    const widthRatio = Math.min(handWidth / TARGET_HAND_WIDTH, TARGET_HAND_WIDTH / handWidth)
-    const heightRatio = Math.min(handHeight / TARGET_HAND_HEIGHT, TARGET_HAND_HEIGHT / handHeight)
+    // Calculate fit score based on how close the hand size is to target percentage
+    // More lenient scoring - reward hands that are at least 25% of the target size
+    const widthRatio = Math.min(handWidthPercent / TARGET_HAND_WIDTH_PERCENT, TARGET_HAND_WIDTH_PERCENT / handWidthPercent)
+    const heightRatio = Math.min(handHeightPercent / TARGET_HAND_HEIGHT_PERCENT, TARGET_HAND_HEIGHT_PERCENT / handHeightPercent)
     
-    return Math.min(widthRatio * heightRatio * 100, 100)
+    // Boost the score to make it easier to reach higher percentages
+    const rawScore = widthRatio * heightRatio * 100
+    const boostedScore = Math.min(rawScore * 1.3, 100)
+    
+    return boostedScore
   }
 
   // Results handler uses refs to access latest values without retriggering setup
@@ -736,7 +741,7 @@ const toggleHandGuide = () => {
     <div className="relative bg-gray-900 rounded-xl overflow-hidden border border-gray-700 -mx-4 sm:mx-0">
       <video
         ref={videoRef}
-        className="w-full min-h-[38vh] sm:min-h-0 sm:h-80 object-cover"
+        className="w-full min-h-[32vh] sm:min-h-0 sm:h-80 object-cover"
         autoPlay
         playsInline
         muted
