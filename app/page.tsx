@@ -75,12 +75,12 @@ export default function Home() {
         )}
       </AnimatePresence>
       
-      <div className="container mx-auto px-4 py-10 sm:py-16">
+      <div className={`container mx-auto px-4 ${isScanning ? 'py-2 sm:py-16' : 'py-10 sm:py-16'}`}>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
-          className="text-center mb-14 sm:mb-24 relative"
+          className={`text-center relative ${isScanning ? 'hidden sm:block sm:mb-24' : 'mb-14 sm:mb-24'}`}
         >
           {/* Decorative elements */}
           <div className="absolute inset-0 -top-[120px] sm:-top-[200px] -z-10">
@@ -180,13 +180,13 @@ export default function Home() {
             </motion.div>
           )}
 
-          {/* Glove Size Display */}
+          {/* Glove Size Display - hidden on mobile when scanning */}
           {(gloveSize || sport) && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="mt-6 flex items-center justify-center gap-2 flex-wrap"
+              className={`mt-6 flex items-center justify-center gap-2 flex-wrap ${isScanning ? 'hidden sm:flex' : ''}`}
             >
               {gloveSize && (
                 <button
@@ -224,7 +224,7 @@ export default function Home() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="lg:col-span-2 bg-gradient-to-b from-gray-900/90 to-black/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl p-4 sm:p-6 lg:p-8 border border-white/10"
+            className="lg:col-span-2 bg-gradient-to-b from-gray-900/90 to-black/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl p-2 sm:p-6 lg:p-8 border border-white/10"
           >
             <HandScanner 
               onMeasurementsUpdate={setMeasurements}

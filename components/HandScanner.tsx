@@ -693,14 +693,15 @@ const toggleHandGuide = () => {
 }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2 sm:space-y-4">
+      {/* Control buttons - compact on mobile */}
       <div className="flex justify-center">
         <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex sm:flex-wrap sm:justify-center">
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={toggleScanning}
-            className={`col-span-1 sm:col-auto w-full sm:w-auto px-4 py-2.5 rounded-lg font-medium transition-colors active:scale-[.98] ${
+            className={`col-span-1 sm:col-auto w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg font-medium transition-colors active:scale-[.98] text-sm sm:text-base ${
             isScanning
               ? 'bg-gradient-to-r from-gray-900/95 via-gray-800/95 to-gray-900/95 hover:from-gray-800/95 hover:via-gray-700/95 hover:to-gray-800/95 text-white border border-gray-700'
               : 'bg-gradient-to-r from-gray-900/95 via-gray-800/95 to-gray-900/95 hover:from-gray-800/95 hover:via-gray-700/95 hover:to-gray-800/95 text-white border border-gray-700'
@@ -708,12 +709,12 @@ const toggleHandGuide = () => {
         >
           {isScanning ? (
             <>
-              <Pause className="w-4 h-4 inline mr-2" />
+              <Pause className="w-4 h-4 inline mr-1 sm:mr-2" />
               Stop
             </>
           ) : (
             <>
-              <Play className="w-4 h-4 inline mr-2" />
+              <Play className="w-4 h-4 inline mr-1 sm:mr-2" />
               Start
             </>
           )}
@@ -723,18 +724,19 @@ const toggleHandGuide = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={resetCamera}
-            className="col-span-1 sm:col-auto w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-gray-900/95 via-gray-800/95 to-gray-900/95 hover:from-gray-800/95 hover:via-gray-700/95 hover:to-gray-800/95 text-white rounded-lg font-medium transition-colors border border-gray-700 active:scale-[.98]"
+            className="col-span-1 sm:col-auto w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-gray-900/95 via-gray-800/95 to-gray-900/95 hover:from-gray-800/95 hover:via-gray-700/95 hover:to-gray-800/95 text-white rounded-lg font-medium transition-colors border border-gray-700 active:scale-[.98] text-sm sm:text-base"
         >
-          <RotateCcw className="w-4 h-4 inline mr-2" />
+          <RotateCcw className="w-4 h-4 inline mr-1 sm:mr-2" />
           Reset
         </motion.button>
       </div>
     </div>
 
-    <div className="relative bg-gray-900 rounded-xl overflow-hidden border border-gray-700">
+    {/* Camera view - much larger on mobile */}
+    <div className="relative bg-gray-900 rounded-xl overflow-hidden border border-gray-700 -mx-4 sm:mx-0">
       <video
         ref={videoRef}
-        className="w-full aspect-[4/3] sm:h-80 object-cover"
+        className="w-full min-h-[70vh] sm:min-h-0 sm:h-80 object-cover"
         autoPlay
         playsInline
         muted
