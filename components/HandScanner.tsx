@@ -741,14 +741,14 @@ const toggleHandGuide = () => {
     <div className="relative bg-gray-900 rounded-xl overflow-hidden border border-gray-700 -mx-4 sm:mx-0">
       <video
         ref={videoRef}
-        className="w-full min-h-[38vh] max-h-[58vh] sm:max-h-80 object-cover"
+        className="w-full min-h-[38vh] max-h-[58vh] sm:max-h-80 object-cover scale-x-[-1]"
         autoPlay
         playsInline
         muted
       />
       <canvas
         ref={canvasRef}
-        className="absolute top-0 left-0 w-full h-full"
+        className="absolute top-0 left-0 w-full h-full scale-x-[-1]"
         width={640}
         height={480}
       />
