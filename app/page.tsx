@@ -6,9 +6,11 @@ import MeasurementDisplay from '@/components/MeasurementDisplay'
 import Header from '@/components/Header'
 import GloveSizeSelector, { GloveSize } from '@/components/GloveSizeSelector'
 import SportSelector, { Sport } from '@/components/SportSelector'
+import SplashScreen from '@/components/SplashScreen'
 import { motion, useAnimation, AnimatePresence } from 'framer-motion'
 
 export default function Home() {
+  const [showSplash, setShowSplash] = useState(true)
   const [measurements, setMeasurements] = useState<{
     palmWidth: number
     palmLength: number
@@ -19,7 +21,7 @@ export default function Home() {
   const [isScanning, setIsScanning] = useState(false)
   const [isCalibrated, setIsCalibrated] = useState(false)
   const [gloveSize, setGloveSize] = useState<GloveSize | null>(null)
-  const [showGloveSelector, setShowGloveSelector] = useState(true)
+  const [showGloveSelector, setShowGloveSelector] = useState(false)
   const [sport, setSport] = useState<Sport | null>(null)
   const [showSportSelector, setShowSportSelector] = useState(false)
   const controls = useAnimation()
@@ -52,18 +54,43 @@ export default function Home() {
   }, [controls])
 
   return (
-    <main className="min-h-screen">
-      <Header />
-      
-      {/* Glove Size Selector Modal */}
-      <AnimatePresence>
-        {showGloveSelector && (
-          <GloveSizeSelector
-            onSizeSelected={handleGloveSizeSelected}
-            isVisible={showGloveSelector}
+    <>
+      {/* Splash Screen - Shows FIRST before anything else */}
+      <AnimatePresence mode="wait">
+        {showSplash && (
+          <SplashScreen 
+            onComplete={() => {
+              setShowSplash(false)
+              setShowGloveSelector(true) // Only show glove selector AFTER splash completes
+            }} 
+            duration={3000}
           />
         )}
       </AnimatePresence>
+
+      <main className="min-h-screen">
+        {/* Header - fades in after splash screen completes */}
+        <AnimatePresence>
+          {!showSplash && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
+              <Header />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        {/* Glove Size Selector Modal */}
+        <AnimatePresence>
+          {showGloveSelector && (
+            <GloveSizeSelector
+              onSizeSelected={handleGloveSizeSelected}
+              isVisible={showGloveSelector}
+            />
+          )}
+        </AnimatePresence>
 
       {/* Sport Selector Modal */}
       <AnimatePresence>
@@ -75,54 +102,17 @@ export default function Home() {
         )}
       </AnimatePresence>
       
-      <div className={`container mx-auto px-4 ${isScanning ? 'py-2 pb-8 sm:py-16' : 'py-10 sm:py-16'}`}>
+      <div className={`container mx-auto px-4 ${isScanning ? 'py-2 pb-8 sm:py-16' : 'py-4 sm:py-6'}`}>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
-          className={`text-center relative ${isScanning ? 'hidden sm:block sm:mb-24' : 'mb-14 sm:mb-24'}`}
+          className={`text-center relative ${isScanning ? 'hidden sm:block sm:mb-8' : 'mb-4 sm:mb-6'}`}
         >
           {/* Decorative elements */}
-          <div className="absolute inset-0 -top-[120px] sm:-top-[200px] -z-10">
+          <div className="absolute inset-0 -top-[60px] sm:-top-[100px] -z-10">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] sm:w-[600px] sm:h-[600px] bg-gradient-to-r from-gray-900/50 to-black rounded-full blur-3xl"></div>
           </div>
-
-          {/* Title */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="relative"
-          >
-            <motion.h1 
-              className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-2"
-              style={{
-                background: 'linear-gradient(to right, #fff, #d1d5db, #fff)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundSize: '200% auto',
-              }}
-              animate={{
-                backgroundPosition: ['0% center', '200% center'],
-              }}
-              transition={{
-                duration: 30,
-                repeat: Infinity,
-                ease: 'linear',
-              }}
-            >
-              ArmaScan
-            </motion.h1>
-            
-            {/* Animated underline */}
-            <div className="relative h-px w-40 mx-auto overflow-hidden">
-              <motion.div
-                animate={controls}
-                className="absolute h-full bg-gradient-to-r from-white/60 via-white to-white/60"
-                style={{ width: '30%' }}
-              />
-            </div>
-          </motion.div>
 
           {/* Welcome and Instructions */}
           {!gloveSize && !sport && (
@@ -130,10 +120,10 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.4 }}
-              className="mt-6 bg-gradient-to-b from-gray-900/70 to-black/70 backdrop-blur-xl rounded-2xl p-6 border border-gray-700 max-w-2xl mx-auto"
+              className="mt-4 bg-gradient-to-b from-gray-900/70 to-black/70 backdrop-blur-xl rounded-2xl p-6 border border-gray-700 max-w-2xl mx-auto"
             >
               <div className="text-center mb-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Welcome to ArmaScan</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Welcome</h2>
                 <p className="text-gray-300 text-sm sm:text-base">Get perfect-fitting sports gloves with AI-powered hand scanning</p>
               </div>
               
@@ -186,7 +176,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className={`mt-6 flex items-center justify-center gap-2 flex-wrap ${isScanning ? 'hidden sm:flex' : ''}`}
+              className={`mt-2 flex items-center justify-center gap-2 flex-wrap ${isScanning ? 'hidden sm:flex' : ''}`}
             >
               {gloveSize && (
                 <button
@@ -246,5 +236,6 @@ export default function Home() {
         </div>
       </div>
     </main>
+    </>
   )
 } 
