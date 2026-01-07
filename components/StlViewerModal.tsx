@@ -28,15 +28,17 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
  * @property onClose - Callback function triggered when the modal should close
  * @property stlUrl - Blob URL or path to the STL file to display (null if no model loaded)
  * @property downloadName - Optional filename used when downloading the STL (defaults to 'model.stl')
+ * @property isLoading - Optional loading state while STL is being fetched
  */
 interface StlViewerModalProps {
   isOpen: boolean
   onClose: () => void
   stlUrl: string | null
   downloadName?: string
+  isLoading?: boolean
 }
 
-export default function StlViewerModal({ isOpen, onClose, stlUrl, downloadName = 'model.stl' }: StlViewerModalProps) {
+export default function StlViewerModal({ isOpen, onClose, stlUrl, downloadName = 'model.stl', isLoading = false }: StlViewerModalProps) {
   // ============================================================================
   // Refs for Three.js objects
   // Using refs instead of state because Three.js objects don't need to trigger
@@ -385,6 +387,16 @@ export default function StlViewerModal({ isOpen, onClose, stlUrl, downloadName =
             backgroundPosition: '0 0'
           }}
         />
+        
+        {/* Loading overlay - shown while STL is being fetched */}
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-900/80 z-20">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-10 h-10 border-3 border-gray-600 border-t-blue-500 rounded-full animate-spin" />
+              <span className="text-gray-300 text-sm">Loading model...</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -52,7 +52,9 @@ export default function HandScanner({ onMeasurementsUpdate, isScanning, setIsSca
   const [isStlViewerOpen, setIsStlViewerOpen] = useState<boolean>(false)
   const [stlObjectUrl, setStlObjectUrl] = useState<string | null>(null)
   const [stlDownloadName, setStlDownloadName] = useState<string>('model.stl')
+  const [isStlLoading, setIsStlLoading] = useState<boolean>(false)
   const hasAutoOpenedStlRef = useRef<boolean>(false)
+  const hasPrefetchedStlRef = useRef<boolean>(false)
 
   // Simple scan counters for reliable UI control
   const [leftScanCount, setLeftScanCount] = useState<number>(0)
@@ -80,25 +82,60 @@ export default function HandScanner({ onMeasurementsUpdate, isScanning, setIsSca
   const bothScansComplete = leftScanComplete && rightScanComplete
   const [allScansComplete, setAllScansComplete] = useState<boolean>(false)
 
-  // STL preview functionality
+  // Map glove sizes to STL file names (defined once for reuse)
+  const sizeToFilename: Record<GloveSize, string> = {
+    'S': 'arma_small.stl',
+    'M': 'arma_medium.stl', 
+    'L': 'arma_large.stl',
+    'XL': 'arma_xl.stl',
+    '2XL': 'arma_2xl.stl',
+    '3XL': 'arma_3xl.stl'
+  }
+
+  // Prefetch STL file in background as soon as glove size is known
+  useEffect(() => {
+    if (!gloveSize || hasPrefetchedStlRef.current || stlObjectUrl) return
+    
+    hasPrefetchedStlRef.current = true
+    const filename = sizeToFilename[gloveSize]
+    const filePath = `/base_stls/${filename}`
+    
+    // Prefetch in background (don't block UI)
+    fetch(filePath)
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+        return response.blob()
+      })
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob)
+        setStlObjectUrl(url)
+        setStlDownloadName(filename)
+      })
+      .catch(error => {
+        console.error('Error prefetching STL file:', error)
+        hasPrefetchedStlRef.current = false // Allow retry
+      })
+  }, [gloveSize, stlObjectUrl])
+
+  // STL preview functionality - now instant if prefetched
   const previewSTL = async () => {
     if (!gloveSize) {
       console.error('No glove size selected')
       return
     }
 
-    // Map glove sizes to STL file names
-    const sizeToFilename: Record<GloveSize, string> = {
-      'S': 'arma_small.stl',
-      'M': 'arma_medium.stl', 
-      'L': 'arma_large.stl',
-      'XL': 'arma_xl.stl',
-      '2XL': 'arma_2xl.stl',
-      '3XL': 'arma_3xl.stl'
+    // If already prefetched, just open the modal instantly
+    if (stlObjectUrl) {
+      setIsStlViewerOpen(true)
+      return
     }
 
+    // Fallback: fetch if not prefetched yet (shouldn't happen normally)
     const filename = sizeToFilename[gloveSize]
     const filePath = `/base_stls/${filename}`
+    
+    setIsStlLoading(true)
+    setIsStlViewerOpen(true) // Show modal immediately with loading state
 
     try {
       const response = await fetch(filePath)
@@ -108,31 +145,29 @@ export default function HandScanner({ onMeasurementsUpdate, isScanning, setIsSca
       
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
-      // set state for modal
       setStlObjectUrl(url)
       setStlDownloadName(filename)
-      setIsStlViewerOpen(true)
     } catch (error) {
       console.error('Error downloading STL file:', error)
       alert('Error downloading file. Please try again.')
+      setIsStlViewerOpen(false)
+    } finally {
+      setIsStlLoading(false)
     }
   }
 
   const handleCloseStlViewer = () => {
-    if (stlObjectUrl) {
-      window.URL.revokeObjectURL(stlObjectUrl)
-    }
-    setStlObjectUrl(null)
+    // Keep stlObjectUrl cached for instant re-open
     setIsStlViewerOpen(false)
   }
 
-  // Auto-open STL preview after both scans complete (once)
+  // Auto-open STL preview after both scans complete (once) - now instant since prefetched
   useEffect(() => {
-    if (bothHandsScanned && showOrderButton && !isStlViewerOpen && !stlObjectUrl && !hasAutoOpenedStlRef.current) {
+    if (bothHandsScanned && showOrderButton && stlObjectUrl && !isStlViewerOpen && !hasAutoOpenedStlRef.current) {
       hasAutoOpenedStlRef.current = true
-      previewSTL()
+      setIsStlViewerOpen(true)
     }
-  }, [bothHandsScanned, showOrderButton, isStlViewerOpen, stlObjectUrl])
+  }, [bothHandsScanned, showOrderButton, stlObjectUrl, isStlViewerOpen])
 
   // Ensure we mark all complete any time both flags are true
   useEffect(() => {
@@ -1002,6 +1037,7 @@ const toggleHandGuide = () => {
       onClose={handleCloseStlViewer}
       stlUrl={stlObjectUrl}
       downloadName={stlDownloadName}
+      isLoading={isStlLoading}
     />
   </div>
 )
